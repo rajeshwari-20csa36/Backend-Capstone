@@ -4,6 +4,7 @@ package com.ust.zynctime.security.service;
 import com.ust.zynctime.repo.EmployeeRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,6 +28,15 @@ public class ApiUserService implements UserDetailsService {
                 .password(dbUser.getPassword())
                 .authorities(dbUser.getAuthorities())
                 .build();
+    }
+    public boolean hasRole(String username, String role) {
+        // Here, we can fetch the user from the database by email/username and check their roles
+        // Assuming you have an Employee entity with roles stored in a collection or a role string
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // Check if the user has the specified role
+        return userDetails.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_" + role));
     }
 
 }
