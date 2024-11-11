@@ -48,11 +48,13 @@ public class SecurityConfig{
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/api/employees/**", "/api/employees/db**").permitAll();
+
+                    auth.requestMatchers("/api/employee/email/**").hasAnyRole("ADMIN", "ORGANIZER");
+                    // Your existing patterns
+                    auth.requestMatchers("/api/employees/**", "/api/employees/db**", "/api/timezone/**").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-//            .httpBasic(Customizer.withDefaults());
         return http.build();
     }
 
