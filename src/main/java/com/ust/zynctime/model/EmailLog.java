@@ -33,5 +33,5 @@ public class EmailLog {
     private String errorMessage;
 
     @Column(nullable = false)
-    private String sentBy;pu
+    private String sentBy;
 }

@@ -49,7 +49,7 @@ public class SecurityConfig{
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
 
-                    auth.requestMatchers("/api/employee/email/**").hasAnyRole("ADMIN", "ORGANIZER");
+                    auth.requestMatchers("/api/timezone/email/**").hasAnyRole("ADMIN", "ORGANIZER");
                     // Your existing patterns
                     auth.requestMatchers("/api/employees/**", "/api/employees/db**", "/api/timezone/**").permitAll();
                     auth.anyRequest().authenticated();

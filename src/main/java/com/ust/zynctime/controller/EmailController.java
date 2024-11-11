@@ -4,12 +4,13 @@ import com.ust.zynctime.dto.EmailResponse;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,21 +26,22 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/employee/email")
+@RequestMapping("/api/timezone/email")
 @Validated
 public class EmailController {
 
     @Autowired
     private JavaMailSender mailSender;
 
-    @Value("${spring.mail.username}")
-    private String fromEmail;
 
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")  // Restrict to admin and organizer roles
     @PostMapping("/send")
     public ResponseEntity<EmailResponse> sendEmail(@Valid @RequestBody EmailRequest request) {
         try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            log.debug("User roles: {}", auth.getAuthorities());
             String[] emailAddresses = request.getEmails().split(",");
+
             for (String email : emailAddresses) {
                 SimpleMailMessage message = new SimpleMailMessage();
                 message.setFrom("rajirajeshwar552@gmail.com");
@@ -63,15 +65,5 @@ public class EmailController {
         }
     }
 
-    private String buildEmailContent(EmailRequest request) {
-        return String.format("""
-            Date: %s
-            Time: %s
-            Mode: %s
-            """,
-                request.getDate(),
-                request.getTime(),
-                request.getMode()
-        );
-    }
+
 }
